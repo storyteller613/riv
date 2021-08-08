@@ -16,7 +16,7 @@ The name of the Persistent Volume is efs-pv. Since EFS is a file system service,
 
 The name of the PersistentVolumeClaim is efs-pvc. ReadWriteMany was chosen for teh accessMode so that multiple nodes can use that volume. The storageClassname is efs-sc from the Storage Class service. The full 5 Gigabytes from the Persistent Volume service was utilized, but less could have been used.
 
-This Persistent Volume was attached to the container via persistentVolumeClaims and volumeMounts in the Deployment Service. The mountPath assumes that the workdir on the dockerfile is /app and there is a foler names "files" in the /app directory.
+This Persistent Volume was attached to the container via persistentVolumeClaims and volumeMounts in the Deployment Service. Based on the information in the Instructions.md document that the file-writer container writes data files to /var/file-writer, the mountPath assumes that the workdir on the dockerfile is /var and there is a foler names "file-writer" in the working directory in the container.
 
 # Using AWS EKS
 
@@ -70,4 +70,4 @@ Go to Amazon EFS > File system and click the Name of the File System, e.g. eks-e
 
 # Idealized Architecture
 
-The main object missing from the file-writer-deploy-JG yaml file is the Service object. The Service object is responsible for facilitating communications between Pods and/or the external world. There are three types of Service object types: ClusterIP, NodePort, and LoadBalancer. The choice of the Service object type is dependent on the type of communication desired between the Pods and the Pods and the outside world.
+There was no mention in the Instructions.md of the communications required between the Pods or the Pod and the outside world. Thus, the main object missing from the file-writer-deploy-JG yaml file is the Service object. The Service object is responsible for facilitating communications between Pods and/or the external world. There are three types of Service object types: ClusterIP, NodePort, and LoadBalancer. The choice of the Service object type is dependent on the type of communication desired between the Pods and the Pods and the outside world.
