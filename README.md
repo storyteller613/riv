@@ -10,11 +10,9 @@ Persistent Volumes are standalone Cluster resources and therefore are Pod and No
 
 # file-writer-deploy.yaml: Services
 
-The name of the Storage Class service is efs-sc.
+The name of the Storage Class is efs-sc.
 
-The name of the Persistent Volume service is efs-pv. Since EFS is a file system service, the volumeMode is Filesystem. It has a maximum storage of 5 Gigabytes. ReadWriteMany was chosen for teh accessMode so that multiple nodes can use that volume. Use the FILE_SYSTEM_ID generated in AWS above for the volumeHandle.
-
-The name of the Persistent Volume service is efs-pv. The maximum capacity of the Persistent Volume service is 5 Gigabytes. Since EFS is a file system service, the volumeMode is Filesystem. ReadWriteMany was chosen for the accessMode so that multiple nodes can use that volume. Therefor, all the pods could use the file system. 
+The name of the Persistent Volume is efs-pv. Since EFS is a file system service, the volumeMode is Filesystem. It has a maximum storage of 5 Gigabytes. ReadWriteMany was chosen for teh accessMode so that multiple nodes can use that volume. Use the FILE_SYSTEM_ID generated in AWS above for the volumeHandle.
 
 The name of the PersistentVolumeClaim is efs-pvc. ReadWriteMany was chosen for teh accessMode so that multiple nodes can use that volume. The storageClassname is efs-sc from the Storage Class service. The full 5 Gigabytes from the Persistent Volume service was utilized, but less could have been used.
 
@@ -69,3 +67,7 @@ Go to Amazon EFS > File system and click the Name of the File System, e.g. eks-e
 ### Amazon CloudWatch Events
 
 ### AWS CloudTrail Log Monitoring
+
+# Idealized Architecture
+
+The main object missing from the file-writer-deploy-JG yaml file is the Service object. The Service object is responsible for facilitating communications between Pods and/or the external world. There are three types of Service object types: ClusterIP, NodePort, and LoadBalancer. The choice of the Service object type is dependent on the type of communication desired between the Pods and the Pods and the outside world.
