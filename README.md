@@ -6,7 +6,7 @@ Part of the goal of this challenge is to set up a volume to write these files. T
 
 Persistent Volumes are standalone Cluster resources and therefore are Pod and Node independent. The Peristent Volume Claim belongs to the Pods and the Nodes on which the Pods run. This means that when Pods are destroyed, this volume type will persist. There are many types of Persistent Volumes, and one of the most flexible types is called Container Storage Interface (CSI). This persistent volume type faciliates the utilization of any storage solution as long as there is a CSI driver for this solution or one could create a custom driver. The one I am going to focus on for this challenge is the AWS EFS CSI.
 
-![](k8s_PV.png "Kubernetes Persistent Volumes")
+![](K8s_PV.png "Kubernetes Persistent Volumes")
 
 # file-writer-deploy.yaml: Services
 
