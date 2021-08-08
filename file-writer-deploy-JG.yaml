@@ -1,0 +1,60 @@
+# A trivial file-writer app deployment spec
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: efs-sc
+provisioner: efs.csi.aws.com
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: efs-pv
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filestyem
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: FILE_SYSTEM_ID
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: efs-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-writer
+  labels:
+    app: file-writer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-writer
+  template:
+    metadata:
+      labels:
+        app: file-writer
+    spec:
+      containers:
+      - name: file-writer
+        image: rivianmfg/rivian-mfg-file-writer:latest
+        volumeMounts:
+          - name: efs-vol
+            mountPath: /app/files
+      volumes:
+        - name: efs-vol
+          persistentVolumeClaim:
+            claimName: efs-pv
