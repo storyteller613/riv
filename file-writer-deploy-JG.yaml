@@ -53,7 +53,7 @@ spec:
         image: rivianmfg/rivian-mfg-file-writer:latest
         volumeMounts:
           - name: efs-vol
-            mountPath: /app/files
+            mountPath: /var/file-writer
       volumes:
         - name: efs-vol
           persistentVolumeClaim:
