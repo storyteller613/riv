@@ -1,10 +1,10 @@
 # Volumes & Persistent Volume
 
-Part of the goal of this challenge is to set up a volume to write these files. There are two types of volmumes: Volumes and Persistent Volumes both allow the user to persist the data. However, Volumes are Pod and Node dependent. Pratically speaking, this means that volumes are destroyed when a Pod is removed. This makes Volumes not as persistent as desired and hard to administer.
+Part of the goal of this challenge is to set up a volume to write these files. There are two types of volumes: Volumes and Persistent Volumes both allow the user to persist the data. However, Volumes are Pod and Node dependent. Pratically speaking, this means that volumes are destroyed when a Pod is removed. This makes Volumes not as persistent as desired and hard to administer.
 
 ![](k8s_volumes.png "Kubernetes Volumes")
 
-Persistent Volumes are standalone Cluster resources and therefore are Pod and Node independent. The Peristent Volume Claim belongs to the Pods and the Nodes on which the Pods run. This means that when Pods are destroyed, this volume type will persist. There are many types of Persistent Volumes, and one of the most flexible types is called Container Storage Interface (CSI). This persistent volume type faciliates the utilization of any storage solution as long as there is a CSI driver for this solution or one could create a custom driver. The one I am going to focus on for this challenge is the AWS EFS CSI.
+Persistent Volumes are standalone Cluster resources and therefore are Pod and Node independent. The Persistent Volume Claim belongs to the Pods and the Nodes on which the Pods run. This means that when Pods are destroyed, this volume type will persist. There are many types of Persistent Volumes, and one of the most flexible types is called Container Storage Interface (CSI). This persistent volume type facilitates the utilization of any storage solution as long as there is a CSI driver for this solution or one could create a custom driver. The one I am going to focus on for this challenge is the AWS EFS CSI.
 
 ![](K8s_PV.png "Kubernetes Persistent Volumes")
 
@@ -12,15 +12,15 @@ Persistent Volumes are standalone Cluster resources and therefore are Pod and No
 
 The name of the Storage Class is efs-sc.
 
-The name of the Persistent Volume is efs-pv. Since EFS is a file system service, the volumeMode is Filesystem. It has a maximum storage of 5 Gigabytes. ReadWriteMany was chosen for teh accessMode so that multiple nodes can use that volume. Use the FILE_SYSTEM_ID generated in AWS above for the volumeHandle.
+The name of the Persistent Volume is efs-pv. Since EFS is a file system service, the volumeMode is Filesystem. Since EFS is an elastic file system, it does not enforce any file system capacity. However, a storage value was provided of 5Gi since Kubernetes requires it. ReadWriteMany was chosen for the accessMode so that multiple nodes can use that volume. Use the FILE_SYSTEM_ID generated in AWS above for the volumeHandle.
 
-The name of the PersistentVolumeClaim is efs-pvc. ReadWriteMany was chosen for teh accessMode so that multiple nodes can use that volume. The storageClassname is efs-sc from the Storage Class service. The full 5 Gigabytes from the Persistent Volume service was utilized, but less could have been used.
+The name of the PersistentVolumeClaim is efs-pvc. ReadWriteMany was chosen for the accessMode so that multiple nodes can use that volume. The storageClassname is efs-sc from the Storage Class service. Since EFS is an elastic file system, it does not enforce any file system capacity. However, a storage value was provided of 5Gi since Kubernetes requires it.
 
-This Persistent Volume was attached to the container via persistentVolumeClaims and volumeMounts in the Deployment Service. Based on the information in the Instructions.md document that the file-writer container writes data files to /var/file-writer, the mountPath assumes that the workdir on the dockerfile is /var and there is a foler names "file-writer" in the working directory in the container.
+This Persistent Volume was attached to the container via persistentVolumeClaims and volumeMounts in the Deployment Object. Based on the information in the Instructions.md document that the file-writer container writes data files to /var/file-writer, the mountPath assumes that the workdir on the dockerfile is /var and there is a folder names "file-writer" in the working directory in the container.
 
 # Using AWS EKS
 
-Since my assumption is that Rvian is using Cloud Provider versus its own Custom Data Center, there are two options: create and connect the machine and install and configure software manually or via a resource like kops. The other option is a managed service for kubernetes deployments which defines the cluster archicture, for example AWS Elastic Kubernetes Service. AWS EKS uses standard kubernetes configurations.
+Since my assumption is that Rvian is using Cloud Provider versus its own Custom Data Center, there are two options: create and connect the machine and install and configure software manually or an open-source project used to set up Kubernetes clusters easily like kops. The other option is a managed service for kubernetes deployments which defines the cluster architecture, for example AWS Elastic Kubernetes Service. AWS EKS uses standard kubernetes configurations.
 
 ## 1. AWS: Steps for creating an Elastic Kubernetes Service
 
@@ -32,11 +32,11 @@ In the terminal, type "aws configure" and type the AWSAccessKeyID, AWSSecretKey,
 
 ## 3. AWS: Adding Worker Nodes
 
-Go to compute section on the user's cluster and "Add a Node Group". Insert name, Node IAM (choose EC2 -> AmazonEKSWorkerNodePolicy, AmazonEKS_CNI_Policy, AmazonEC2ContainerRegistryReadOnly), Node Group compute configuration (use at least t3.small)  
+Go to compute section on the user's cluster and "Add a Node Group". Insert name, Node IAM (choose EC2 -> AmazonEKSWorkerNodePolicy, AmazonEKS_CNI_Policy, AmazonEC2ContainerRegistryReadOnly), Node Group compute configuration (use at least t3.small).  
 
 ## 4. AWS: Steps for adding AWS EFS as a Persistent Volume
 
-### 1. From this url (https://github.com/kubernetes-sigs/aws-efs-csi-driver), copy and paste: kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.3" in the terminal to install the driver in the user's Kubernetes Cluster.
+### 1. From this URL (https://github.com/kubernetes-sigs/aws-efs-csi-driver), copy and paste: kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.3" in the terminal to install the driver in the user's Kubernetes Cluster.
 
 ### 2. Create an elastic file system on the AWS account: choose name, VPC for cluster, security group
 
@@ -46,13 +46,17 @@ Go to compute section on the user's cluster and "Add a Node Group". Insert name,
 
 # Capacity Planning
 
+Utilize a resource that can measure inputs, outputs, and throughput. It should also be able to provide monitoring and alerts. An example of an AWS resource like this is IOPS. It measures how many IO requests can be completed by the storage device in a second. It can assess throughput and find bottlenecks.
+
+A concern with EFS is that many small files in the system can cause latency issues. It can take a significant amount of time to delete these small files. One solution would be to create subfolders based on a time stamp.
+
 Steps for calculating data storage capacity requirements:
 
 ### 1. Collect the data
 
 ### 2. Determine the growth rate of the data
 
-### 3. Consult with stakeholders (IT managemnt)
+### 3. Consult with stakeholders (IT management)
 
 ### 4. Set realistic data storage goals
 
@@ -71,3 +75,5 @@ Go to Amazon EFS > File system and click the Name of the File System, e.g. eks-e
 # Idealized Architecture
 
 There was no mention in the Instructions.md of the communications required between the Pods or the Pod and the outside world. Thus, the main object missing from the file-writer-deploy-JG yaml file is the Service object. The Service object is responsible for facilitating communications between Pods and/or the external world. There are three types of Service object types: ClusterIP, NodePort, and LoadBalancer. The choice of the Service object type is dependent on the type of communication desired between the Pods and the Pods and the outside world.
+
+Another aspect would be security. It would be advisable to scope access. This would protect user A from user B and visa-versa. 
