@@ -36,13 +36,13 @@ Go to compute section on the user's cluster and "Add a Node Group". Insert name,
 
 ## 4. AWS: Steps for adding AWS EFS as a Persistent Volume
 
-### 1. From this URL (https://github.com/kubernetes-sigs/aws-efs-csi-driver), copy and paste: kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.3" in the terminal to install the driver in the user's Kubernetes Cluster.
+#### 1. From this URL (https://github.com/kubernetes-sigs/aws-efs-csi-driver), copy and paste: kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.3" in the terminal to install the driver in the user's Kubernetes Cluster.
 
-### 2. Create an elastic file system on the AWS account: choose name, VPC for cluster, security group
+#### 2. Create an elastic file system on the AWS account: choose name, VPC for cluster, security group
 
-### 3. Copy and paste File System ID (FILE_SYSTEM_ID), e.g. fs-########. 
+#### 3. Copy and paste File System ID (FILE_SYSTEM_ID), e.g. fs-########. 
 
-### 4. Step for applying updated yaml file: Use "kubectl apply -f=file-writer-deploy-JG" in the terminal.
+#### 4. Step for applying updated yaml file: Use "kubectl apply -f=file-writer-deploy-JG" in the terminal.
 
 # Capacity Planning
 
@@ -52,25 +52,25 @@ A concern with EFS is that many small files in the system can cause latency issu
 
 Steps for calculating data storage capacity requirements:
 
-### 1. Collect the data
+#### 1. Collect the data
 
-### 2. Determine the growth rate of the data
+#### 2. Determine the growth rate of the data
 
-### 3. Consult with stakeholders (IT management)
+#### 3. Consult with stakeholders (IT management)
 
-### 4. Set realistic data storage goals
+#### 4. Set realistic data storage goals
 
 # Monitoring Files
 
 Go to Amazon EFS > File system and click the Name of the File System, e.g. eks-efs. Then click the Monitoring and Metered size tabs. Options for monitoring files include (https://docs.aws.amazon.com/efs/latest/ug/monitoring_automated_manual.html):
 
-### Amazon CloudWatch Alarms
+#### Amazon CloudWatch Alarms
 
-### Amazon CloudWatch Logs
+#### Amazon CloudWatch Logs
 
-### Amazon CloudWatch Events
+#### Amazon CloudWatch Events
 
-### AWS CloudTrail Log Monitoring
+#### AWS CloudTrail Log Monitoring
 
 # Idealized Architecture
 
