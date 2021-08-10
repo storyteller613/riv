@@ -48,7 +48,7 @@ Go to compute section on the user's cluster and "Add a Node Group". Insert name,
 
 Utilize a resource that can measure inputs, outputs, and throughput. It should also be able to provide monitoring and alerts. An example of an AWS resource like this is IOPS. It measures how many IO requests can be completed by the storage device in a second. It can assess throughput and find bottlenecks.
 
-A concern with EFS is that many small files in the system can cause latency issues. It can take a significant amount of time to delete these small files. One solution would be to create subfolders based on a time stamp.
+A concern with EFS is that hundred of thousands or millions files in the system can cause latency issues. It can take a significant amount of time to delete these small files. One solution would be to create subfolders based on a time stamp.
 
 Steps for calculating data storage capacity requirements:
 
@@ -74,6 +74,10 @@ Go to Amazon EFS > File system and click the Name of the File System, e.g. eks-e
 
 # Idealized Architecture
 
+Another type of persistent volume that could be used is the AWS Elastic Block Store (awsElasticBlockStore). However, AWS EBS can only be accessed by a single instance at a time whereas EFS can have hundreds or thousands of instances accessing the file system simultaneously. However, EFS costs more than EBS ($0.30 per GB for EFS vs. $0.10 per GB for EBS). Thus, the choice depends on the specific of the use case.
+
+A different approach would be to use an ephemeral volume and connect that to an S3 bucket, e.g. EmptyDir or hostPath. There are several options to get the data from the local directory to S3: use S3FS to mount a S3 bucket as a volume in the Pod, create an application to copy the files to the S3 bucket, use AWS CLI (aws s3 sync or aws s3 mv myDir s3://mybucket/ --recursive), or use rsync to connect the local directory to the S3 bucket. It would be desirable to avoid duplication on the S3 bucket. This can be achieved via StorReduce’s deduplication software (https://aws.amazon.com/blogs/apn/cloud-deduplication-on-demand-storreduce-an-apn-technology-partner/).
+
 There was no mention in the Instructions.md of the communications required between the Pods or the Pod and the outside world. Thus, the main object missing from the file-writer-deploy-JG yaml file is the Service object. The Service object is responsible for facilitating communications between Pods and/or the external world. There are three types of Service object types: ClusterIP, NodePort, and LoadBalancer. The choice of the Service object type is dependent on the type of communication desired between the Pods and the Pods and the outside world.
 
-Another aspect would be security. It would be advisable to scope access. This would protect user A from user B and visa-versa. 
+Regarding security, it would be advisable to scope access. This would protect user A from user B and visa-versa. This could be accomplished by using a resource that provides IAM credentials to containers running inside a kubernetes cluster like kube2iam and kiam.
