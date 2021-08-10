@@ -74,7 +74,7 @@ Go to Amazon EFS > File system and click the Name of the File System, e.g. eks-e
 
 # Idealized Architecture
 
-Another type of persistent volume that could be used is the AWS Elastic Block Store (awsElasticBlockStore). However, AWS EBS can only be accessed by a single instance at a time whereas EFS can have hundreds or thousands of instances accessing the file system simultaneously. EFS costs more than EBS ($0.30 per GB for EFS vs. $0.10 per GB for EBS). Thus, the choice depends on the specific of the use case.
+Another type of persistent volume that could be used is the AWS Elastic Block Store (awsElasticBlockStore). However, AWS EBS can only be accessed by a single instance at a time whereas EFS can have hundreds or thousands of instances accessing the file system simultaneously. EFS costs more than EBS ($0.30 per GB for EFS vs. $0.10 per GB for EBS). Thus, the choice depends on the specifics of the use case.
 
 A different approach would be to use an ephemeral volume and connect that to an S3 bucket, e.g. EmptyDir or hostPath. One approach to get the data from the local directory to S3 would be to use S3FS to mount as a volume in the Pod. Rsync could be used in conjunction with S3FS. It would be desirable to avoid duplication on the S3 bucket and delete the local files after copying them to the S3 bucket. The deduplication can be achieved via StorReduce’s deduplication software (https://aws.amazon.com/blogs/apn/cloud-deduplication-on-demand-storreduce-an-apn-technology-partner/).
 
