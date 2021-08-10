@@ -80,4 +80,4 @@ A different approach would be to use an ephemeral volume and connect that to an 
 
 There was no mention in the Instructions.md of the communications required between the Pods or the Pod and the outside world. Thus, the main object missing from the file-writer-deploy-JG yaml file is the Service object. The Service object is responsible for facilitating communications between Pods and/or the external world. There are three types of Service object types: ClusterIP, NodePort, and LoadBalancer. The choice of the Service object type is dependent on the type of communication desired between the Pods and the Pods and the outside world.
 
-For the ephemeral approach, it would be advisable to utilize IAM role assumption for security. A tool like kube2iam and kiam could be utilized to allow the container to assume a role which would allow the container to access the S3 bucket.
+For the ephemeral approach, it would be advisable to utilize IAM role assumption for security purposes. A tool like kube2iam and kiam could be utilized to allow the container to assume a role which would allow the container to access the S3 bucket.
